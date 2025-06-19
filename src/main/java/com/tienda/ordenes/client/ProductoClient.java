@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
-@FeignClient(name = "productos-service", url = "${productos-service.url}", configuration = FeignConfig.class)
+@FeignClient(name = "productos-service", configuration = FeignConfig.class)
 public interface ProductoClient {
     
     @PostMapping("/api/productos/validar-stock")
