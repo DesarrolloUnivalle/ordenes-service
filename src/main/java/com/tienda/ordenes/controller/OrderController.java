@@ -2,17 +2,14 @@ package com.tienda.ordenes.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,7 +19,6 @@ import com.tienda.ordenes.dto.OrderRequest;
 import com.tienda.ordenes.dto.OrderResponse;
 import com.tienda.ordenes.dto.UserResponseDTO;
 import com.tienda.ordenes.repository.OrderRepository;
-import com.tienda.ordenes.service.EmailService;
 import com.tienda.ordenes.service.OrderService;
 import com.tienda.ordenes.service.impl.OrderServiceImpl;
 import com.tienda.ordenes.model.Order;
@@ -40,7 +36,6 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
 
     private final OrderService orderService;
-    private final EmailService emailService;
     private final OrderRepository orderRepository;
     private final UsuarioClient usuarioClient;
 

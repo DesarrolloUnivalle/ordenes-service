@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -33,6 +34,36 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UsuarioClient usuarioClient;
     private final ProductoClient productoClient;
+
+    @Override
+    public OrderResponse obtenerOrdenPorId(Long orderId) {
+        return orderRepository.findById(orderId)
+                .map(OrderResponse::fromEntity)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+    }
+
+    @Override
+    public OrderResponse cancelarOrden(Long orderId) {
+        Order orden = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+
+        orden.setEstado(OrderStatus.CANCELADA);
+        orderRepository.save(orden);
+
+        return OrderResponse.fromEntity(orden);
+    }
+
+    
+    @Override
+    public OrderResponse pagarOrden(Long orderId) {
+        Order orden = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+
+        orden.setEstado(OrderStatus.PAGADA);
+        orderRepository.save(orden);
+
+        return OrderResponse.fromEntity(orden);
+    }
 
     @Override
     @Transactional

@@ -41,6 +41,8 @@ public class EmailServiceImpl implements EmailService {
 
         } catch (MessagingException e) {
             logger.error("Error al enviar el correo: ", e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al enviar el correo: ", e);
         }
     }
     private String generarResumenHtml(String nombre, OrderResponse orden) {
