@@ -43,9 +43,9 @@ spec:
         - name: ADMIN_PASSWORD
           value: "admin123"
         - name: MAIL_USERNAME
-          value: "tu-email@gmail.com"
+          value: "juan.ramirez.agudelo@correounivalle.edu.co"
         - name: MAIL_PASSWORD
-          value: "tu-password-de-aplicacion"
+          value: "edrn vxwu zfji ihjm"
         resources:
           limits:
             memory: "1Gi"
