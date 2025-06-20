@@ -64,80 +64,25 @@ jobs:
           # Aplicar los manifiestos de Kubernetes
           kubectl apply -f ${{ env.K8S_DIR }}/deployment-processed.yml
           kubectl apply -f ${{ env.K8S_DIR }}/service.yml
-          
-          # Logs detallados para diagnóstico
-          echo "=== Estado inicial de los pods ==="
-          kubectl get pods -l app=${{ env.SERVICE_NAME }}
-          
-          echo "=== Información detallada del deployment ==="
-          kubectl describe deployment ${{ env.SERVICE_NAME }}-deployment
-          
-          echo "=== Información detallada de los pods ==="
-          kubectl describe pods -l app=${{ env.SERVICE_NAME }}
-          
-          echo "=== Logs del kubelet (si están disponibles) ==="
-          kubectl logs -n kube-system kube-apiserver-minikube --tail=50 || echo "No se pueden obtener logs del kubelet"
-          
-          echo "=== Estado de los nodos ==="
-          kubectl describe nodes
-          
-          echo "=== Información de recursos del cluster ==="
-          kubectl top nodes || echo "Metrics server no disponible"
-          kubectl top pods || echo "No hay pods para mostrar métricas"
-          
-          # Esperar un poco y mostrar logs de los pods si están disponibles
-          echo "=== Esperando 30 segundos para ver si los pods se crean ==="
-          sleep 30
-          
-          echo "=== Estado de los pods después de 30 segundos ==="
-          kubectl get pods -l app=${{ env.SERVICE_NAME }} -o wide
-          
-          echo "=== Intentando obtener logs de los pods ==="
-          for pod in $(kubectl get pods -l app=${{ env.SERVICE_NAME }} -o jsonpath='{.items[*].metadata.name}'); do
-            echo "--- Logs del pod: $pod ---"
-            kubectl logs $pod --tail=50 || echo "No se pueden obtener logs del pod $pod"
-          done
-          
-          echo "=== Información detallada de los pods después de 30 segundos ==="
-          kubectl describe pods -l app=${{ env.SERVICE_NAME }}
-          
-          # Esperar a que el despliegue esté listo con más tiempo y logs
-          echo "=== Esperando a que el deployment esté listo ==="
-          kubectl rollout status deployment/${{ env.SERVICE_NAME }}-deployment --timeout=300s
+          # Verificar el estado de los pods
+          kubectl get pods
+          kubectl describe pods
+          # Esperar a que el despliegue esté listo
+          kubectl rollout status deployment/${{ env.SERVICE_NAME }}-deployment --timeout=120s
 
       - name: Verify deployment
         run: |
-          # Mostrar estado final
-          echo "=== Estado final de los pods ==="
-          kubectl get pods -l app=${{ env.SERVICE_NAME }} -o wide
-          
-          echo "=== Información final del deployment ==="
-          kubectl describe deployment ${{ env.SERVICE_NAME }}-deployment
-          
-          # Intentar obtener logs de los pods que estén ejecutándose
-          echo "=== Logs finales de los pods ==="
-          for pod in $(kubectl get pods -l app=${{ env.SERVICE_NAME }} -o jsonpath='{.items[*].metadata.name}'); do
-            echo "--- Logs finales del pod: $pod ---"
-            kubectl logs $pod --tail=100 || echo "No se pueden obtener logs del pod $pod"
-          done
-          
           # Esperar a que el servicio esté listo
           sleep 30
           # Obtener la IP de Minikube
           MINIKUBE_IP=$(minikube ip)
-          echo "=== IP de Minikube: $MINIKUBE_IP ==="
-          
           # Verificar health endpoint
-          echo "=== Verificando health endpoint ==="
-          curl -v http://$MINIKUBE_IP:30082/actuator/health || echo "Health endpoint no disponible"
-          
+          curl -sSf http://$MINIKUBE_IP:30082/actuator/health
           # Verificar prometheus endpoint
-          echo "=== Verificando prometheus endpoint ==="
-          curl -v http://$MINIKUBE_IP:30082/actuator/prometheus | head -n 5 || echo "Prometheus endpoint no disponible"
+          curl -sSf http://$MINIKUBE_IP:30082/actuator/prometheus | head -n 5
 
       - name: Cleanup
         if: always()
         run: |
-          echo "=== Limpiando recursos ==="
           minikube stop
           minikube delete
