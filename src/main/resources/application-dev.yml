@@ -1,0 +1,18 @@
+spring:
+  mail:
+    host: localhost
+    port: 1025
+    username: test@test.com
+    password: test
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+    default-encoding: UTF-8
+
+logging:
+  level:
+    org.springframework.mail: DEBUG
+    com.tienda.ordenes.service.impl.EmailServiceImpl: DEBUG 

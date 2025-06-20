@@ -26,21 +26,30 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void enviarConfirmacionPago(String email, String nombre, String orderId, OrderResponse orden) {
+        if (email == null || email.trim().isEmpty()) {
+            logger.warn("No se puede enviar correo: email es null o vacío");
+            return;
+        }
+        
         try {
             MimeMessage mensaje = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
 
             helper.setTo(email);
-            helper.setSubject("Confirmación de Pago");
+            helper.setSubject("Confirmación de Pago - Orden #" + orden.getId());
 
             String cuerpoHtml = generarResumenHtml(nombre, orden);
 
             helper.setText(cuerpoHtml, true);  
             mailSender.send(mensaje);
-            logger.info("Correo enviado exitosamente a {}", email);
+            logger.info("Correo de confirmación enviado exitosamente a {}", email);
 
         } catch (MessagingException e) {
-            logger.error("Error al enviar el correo: ", e);
+            logger.error("Error al enviar el correo de confirmación a {}: {}", email, e.getMessage());
+            // No lanzamos la excepción para no interrumpir el flujo de negocio
+        } catch (Exception e) {
+            logger.error("Error inesperado al enviar correo a {}: {}", email, e.getMessage());
+            // No lanzamos la excepción para no interrumpir el flujo de negocio
         }
     }
     private String generarResumenHtml(String nombre, OrderResponse orden) {
