@@ -44,20 +44,12 @@ spec:
           value: "admin123"
         resources:
           limits:
-            memory: "1024Mi"
+            memory: "1Gi"
             cpu: "1000m"
           requests:
             memory: "512Mi"
             cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-          initialDelaySeconds: 90
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 5
-        readinessProbe:
+        startupProbe:
           httpGet:
             path: /actuator/health
             port: 8080
@@ -65,3 +57,19 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 30
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 5
