@@ -17,4 +17,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .roles("USER") // Puedes cambiar esto según el token, si deseas extraer roles reales
                 .build();
     }
+
+    
 }

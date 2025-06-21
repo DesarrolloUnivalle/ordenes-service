@@ -1,94 +1,47 @@
 package com.tienda.ordenes.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tienda.ordenes.model.Order;
 import com.tienda.ordenes.model.OrderStatus;
-import com.tienda.ordenes.model.OrderItem;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderResponse {
+
     private Long id;
     private OrderStatus status;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaCreacion;
+
     private Double total;
-    private List<OrderItem> items;
+    private List<OrderItemResponseDTO> items;
 
-    public static OrderResponse fromEntity(com.tienda.ordenes.model.Order order) {
-    return OrderResponse.builder()
-            .id(order.getId())
-            .status(order.getEstado())  // Usamos directamente el enum
-            .fechaCreacion(order.getFechaCreacion())
-            .total(order.getTotal())
-            .items(order.getDetalles()) // Ya es una lista de OrderItem
-            .build();
-    }
+    public static OrderResponse fromEntity(Order order) {
+        List<OrderItemResponseDTO> itemDTOs = order.getDetalles().stream()
+                .map(item -> OrderItemResponseDTO.builder()
+                        .productoId(item.getProductoId())
+                        .cantidad(item.getCantidad())
+                        .precio(item.getPrecio())
+                        .build())
+                .collect(Collectors.toList());
 
-
-    private OrderResponse(Builder builder) {
-        this.id = builder.id;
-        this.status = builder.status;
-        this.fechaCreacion = builder.fechaCreacion;
-        this.total = builder.total;
-        this.items = builder.items;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public List<OrderItem> getItems() {
-        return items;
-    }
-
-    public static class Builder {
-        private Long id;
-        private OrderStatus status;
-        private LocalDateTime fechaCreacion;
-        private Double total;
-        private List<OrderItem> items;
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder status(OrderStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder fechaCreacion(LocalDateTime fechaCreacion) {
-            this.fechaCreacion = fechaCreacion;
-            return this;
-        }
-
-        public Builder total(Double total) {
-            this.total = total;
-            return this;
-        }
-
-        public Builder items(List<OrderItem> items) {
-            this.items = items;
-            return this;
-        }
-
-        public OrderResponse build() {
-            return new OrderResponse(this);
-        }
+        return OrderResponse.builder()
+                .id(order.getId())
+                .status(order.getEstado())
+                .fechaCreacion(order.getFechaCreacion())
+                .total(order.getTotal())
+                .items(itemDTOs)
+                .build();
     }
 }

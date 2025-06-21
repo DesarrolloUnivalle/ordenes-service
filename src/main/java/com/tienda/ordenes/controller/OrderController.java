@@ -20,9 +20,9 @@ import com.tienda.ordenes.dto.OrderResponse;
 import com.tienda.ordenes.dto.UserResponseDTO;
 import com.tienda.ordenes.repository.OrderRepository;
 import com.tienda.ordenes.service.OrderService;
-import com.tienda.ordenes.service.impl.OrderServiceImpl;
 import com.tienda.ordenes.model.Order;
 import com.tienda.ordenes.model.OrderStatus;
+import com.tienda.ordenes.service.PagoService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,6 +38,7 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
     private final UsuarioClient usuarioClient;
+    private final PagoService pagoService;
 
 
     @Operation(summary = "Crear una nueva orden")
@@ -47,7 +48,7 @@ public class OrderController {
             @RequestBody @Valid OrderRequest request) {
         String usuarioId = jwt.getSubject();
         OrderResponse response = orderService.crearOrden(usuarioId, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
@@ -79,10 +80,8 @@ public class OrderController {
 
         // 
 
-        ((OrderServiceImpl) orderService).procesarPago(order, usuario);
-
-        OrderResponse response = OrderResponse.fromEntity(order);
-
+        OrderResponse response = pagoService.procesarPago(order, usuario);
         return ResponseEntity.ok(response);
+
     }   
 }

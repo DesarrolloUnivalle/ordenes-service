@@ -109,7 +109,7 @@ public class EmailServiceImpl implements EmailService {
         for (int i = 0; i < orden.getItems().size(); i++) {
             var item = orden.getItems().get(i);
             sb.append("    {\n");
-            sb.append(String.format("      \"id\": %d,\n", item.getId()));
+            sb.append(String.format("      \"id\": %d,\n", item.getProductoId()));
             sb.append(String.format("      \"producto\": \"Producto A\",\n")); // Ajustar si tienes nombre real
             sb.append(String.format("      \"cantidad\": %d,\n", item.getCantidad()));
             sb.append(String.format("      \"precio\": %.2f\n", item.getPrecio()));

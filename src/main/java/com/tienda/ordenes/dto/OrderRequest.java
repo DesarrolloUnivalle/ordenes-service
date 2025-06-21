@@ -1,6 +1,5 @@
 package com.tienda.ordenes.dto;
 
-import com.tienda.ordenes.model.OrderItem;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,5 @@
 package com.tienda.ordenes.security;
 
-import com.tienda.ordenes.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

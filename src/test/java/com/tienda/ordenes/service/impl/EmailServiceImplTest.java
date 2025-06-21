@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.MailSendException;
 
 
 import java.time.LocalDateTime;
@@ -95,6 +94,7 @@ class EmailServiceImplTest {
         var orden = new com.tienda.ordenes.model.Order();
         orden.setId(1L);
         orden.setEstado(OrderStatus.PAGADA);
+        orden.setDetalles(List.of());
 
         var usuario = new com.tienda.ordenes.dto.UserResponseDTO();
         usuario.setCorreo("correo@ejemplo.com");
