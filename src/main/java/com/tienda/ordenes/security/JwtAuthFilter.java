@@ -41,34 +41,39 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         logger.debug("Token encontrado: {}", token);
 
         try {
-            if (!jwtUtil.isTokenExpired(token)) {
-                String username = jwtUtil.extractUsername(token);
-                if (username != null) {
-                    // Crear un objeto Jwt y almacenarlo en el contexto de seguridad
-                    Jwt jwt = Jwt.withTokenValue(token)
-                            .header("alg", "HS256")
-                            .claim("sub", username)
-                            .build();
+    if (!jwtUtil.isTokenExpired(token)) {
+        String username = jwtUtil.extractUsername(token);
+        if (username != null) {
+            Jwt jwt = Jwt.withTokenValue(token)
+                    .header("alg", "HS256")
+                    .claim("sub", username)
+                    .build();
 
                     UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(jwt, null, new ArrayList<>());
+                    new UsernamePasswordAuthenticationToken(jwt, null, new ArrayList<>());
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    logger.debug("Token validado y autenticación establecida para usuario: {}", username);
-                } else {
+                        logger.debug("Token validado y autenticación establecida para usuario: {}", username);
+        } 
+        else {
                     logger.warn("No se pudo extraer el username del token");
+                    SecurityContextHolder.clearContext();
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido");
                     return;
-                }
-            } else {
-                logger.warn("Token expirado");
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expirado");
-                return;
-            }
-        } catch (Exception e) {
-            logger.error("Error al procesar el token: {}", e.getMessage());
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o expirado");
-            return;
         }
+    }   
+    else {
+                    logger.warn("Token expirado");
+                    SecurityContextHolder.clearContext();
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expirado");
+                    return;
+    }
+}           catch (Exception e) {
+                    logger.error("Error al procesar el token: {}", e.getMessage());
+                    SecurityContextHolder.clearContext();
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expirado o inválido");
+                    return;
+}
+
 
         filterChain.doFilter(request, response);
     }

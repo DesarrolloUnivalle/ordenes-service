@@ -8,6 +8,7 @@ import com.tienda.ordenes.dto.OrderRequest;
 import com.tienda.ordenes.dto.OrderRequest.OrderItemRequest;
 import com.tienda.ordenes.dto.OrderResponse;
 import com.tienda.ordenes.dto.UserResponseDTO;
+import com.tienda.ordenes.exception.GlobalExceptionHandler;
 import com.tienda.ordenes.model.Order;
 import com.tienda.ordenes.model.OrderItem;
 import com.tienda.ordenes.model.OrderStatus;
@@ -41,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @WebMvcTest(OrderController.class)
-@Import({JwtAuthFilter.class, JwtUtil.class})
+@Import({JwtAuthFilter.class, JwtUtil.class, GlobalExceptionHandler.class})
 class OrderControllerTest {
 
     @Autowired
@@ -128,8 +129,7 @@ class OrderControllerTest {
         System.out.println("STATUS: " + result.getResponse().getStatus());}) 
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(1L));
-}
-
+    }
 
     @Test
     void listarOrdenesPorUsuario_deberiaRetornarLista() throws Exception {
@@ -186,6 +186,6 @@ class OrderControllerTest {
         .andDo(result -> System.out.println("RESPONSE: " + result.getResponse().getContentAsString()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(orderId));
-}
+    }
 
 }

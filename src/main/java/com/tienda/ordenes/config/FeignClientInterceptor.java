@@ -11,10 +11,21 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var context = SecurityContextHolder.getContext();
+        var authentication = context.getAuthentication();
+
+        if (authentication == null) {
+            return;
+        }
+
+        Object principal = authentication.getPrincipal();
         if (principal instanceof Jwt jwt) {
             String token = jwt.getTokenValue();
             template.header("Authorization", "Bearer " + token);
         }
     }
+
+
+    
+
 }
