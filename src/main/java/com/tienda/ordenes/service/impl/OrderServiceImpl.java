@@ -9,12 +9,10 @@ import com.tienda.ordenes.model.Order;
 import com.tienda.ordenes.model.OrderItem;
 import com.tienda.ordenes.model.OrderStatus;
 import com.tienda.ordenes.repository.OrderRepository;
-import com.tienda.ordenes.service.EmailService;
 import com.tienda.ordenes.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
@@ -134,11 +130,5 @@ public class OrderServiceImpl implements OrderService {
         order.setEstado(OrderStatus.PAGADA);
         orderRepository.save(order);
         logger.info("Orden procesada y marcada como PAGADA.");
-        
-        
-        OrderResponse respuesta = OrderResponse.fromEntity(order);
-        emailService.enviarConfirmacionPago(emailUsuario, nombreUsuario, order.getId().toString(), respuesta);
-
-
     }
 }

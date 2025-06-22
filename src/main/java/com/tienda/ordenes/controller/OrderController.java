@@ -22,7 +22,6 @@ import com.tienda.ordenes.dto.OrderRequest;
 import com.tienda.ordenes.dto.OrderResponse;
 import com.tienda.ordenes.dto.UserResponseDTO;
 import com.tienda.ordenes.repository.OrderRepository;
-import com.tienda.ordenes.service.EmailService;
 import com.tienda.ordenes.service.OrderService;
 import com.tienda.ordenes.service.impl.OrderServiceImpl;
 import com.tienda.ordenes.model.Order;
@@ -40,10 +39,8 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
 
     private final OrderService orderService;
-    private final EmailService emailService;
     private final OrderRepository orderRepository;
     private final UsuarioClient usuarioClient;
-
 
     @Operation(summary = "Crear una nueva orden")
     @PostMapping
