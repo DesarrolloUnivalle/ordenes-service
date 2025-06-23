@@ -65,7 +65,7 @@ class EmailServiceImplTest {
         String nombre = "Error";
         String orderId = "999";
 
-        OrderResponse orden = OrderResponse.builder()
+        OrderResponse orden = OrderResponse.builder() 
                 .id(999L)
                 .status(OrderStatus.PAGADA)
                 .fechaCreacion(LocalDateTime.now())
@@ -73,10 +73,10 @@ class EmailServiceImplTest {
                 .items(List.of())
                 .build();
 
-        MimeMessage mensaje = mock(MimeMessage.class);
+        MimeMessage mensaje = mock(MimeMessage.class); 
         when(mailSender.createMimeMessage()).thenReturn(mensaje);
 
-        // ✅ Lanza RuntimeException que envuelve la MessagingException
+        // Lanza RuntimeException que envuelve la MessagingException
         doThrow(new RuntimeException(new MessagingException("Fallo intencional")))
                 .when(mailSender).send(any(MimeMessage.class));
 
@@ -100,10 +100,12 @@ class EmailServiceImplTest {
         usuario.setCorreo("correo@ejemplo.com");
         usuario.setNombre("Usuario Test");
 
-        OrderResponse resultado = emailService.procesarPago(orden, usuario);
-
+        // Act
+        OrderResponse resultado = emailService.procesarPago(orden, usuario); 
+        
+        // Assert
         verify(orderRepository, never()).save(any());
-        verify(mailSender, never()).send(any(MimeMessage.class));
+        verify(mailSender, never()).send(any(MimeMessage.class)); // Verifica que no se envió correo
         assertEquals(OrderStatus.PAGADA, resultado.getStatus());
     }
 
@@ -133,9 +135,7 @@ class EmailServiceImplTest {
         verify(mailSender).send(any(MimeMessage.class));
         assertEquals(OrderStatus.PAGADA, resultado.getStatus());
     }
-
-
-
+    
 }
 
 

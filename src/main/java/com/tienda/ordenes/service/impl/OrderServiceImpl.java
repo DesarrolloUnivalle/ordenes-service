@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
-    private EmailService emailService;
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
     private final UsuarioClient usuarioClient;
     private final ProductoClient productoClient;
+    private final EmailService emailService;
 
     @Override
     public OrderResponse obtenerOrdenPorId(Long orderId) {
@@ -173,7 +173,6 @@ public class OrderServiceImpl implements OrderService {
         
         OrderResponse respuesta = OrderResponse.fromEntity(order);
         emailService.enviarConfirmacionPago(emailUsuario, nombreUsuario, order.getId().toString(), respuesta);
-
-
     }
-}
+
+}   

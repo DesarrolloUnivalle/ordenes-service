@@ -22,7 +22,7 @@ class JwtAuthFilterIntegrationTest {
     @MockBean
     private JwtUtil jwtUtil;
 
-    private final String endpointProtegido = "/api/ordenes"; // ajústalo a tu ruta real
+    private final String endpointProtegido = "/api/ordenes";
 
     @Test
     void accederConTokenValido_deberiaRetornar200() throws Exception {
@@ -35,7 +35,7 @@ class JwtAuthFilterIntegrationTest {
         mockMvc.perform(get("/test/protegido")
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()); // Verifica que el acceso sea permitido con un token válido
     }
 
     @Test
@@ -47,14 +47,14 @@ class JwtAuthFilterIntegrationTest {
         mockMvc.perform(get(endpointProtegido)
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized()); // Debería retornar 401 Unauthorized, no 403 Forbidden
     }
 
     @Test
     void accederSinToken_deberiaRetornar403() throws Exception {
         mockMvc.perform(get(endpointProtegido)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized()); // depende de tu config de seguridad
+                .andExpect(status().isUnauthorized()); // Debería retornar 401 Unauthorized, no 403 Forbidden
     }
 
     @Test
@@ -67,8 +67,8 @@ class JwtAuthFilterIntegrationTest {
     mockMvc.perform(get(endpointProtegido)
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized());
-}
+            .andExpect(status().isUnauthorized()); // Debería retornar 401 Unauthorized, no 403 Forbidden
+    }
 
     @Test
     void tokenInvalido_lanzaExcepcion_deberiaRetornar401() throws Exception {
@@ -79,16 +79,16 @@ class JwtAuthFilterIntegrationTest {
     mockMvc.perform(get(endpointProtegido)
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized());
-}
+            .andExpect(status().isUnauthorized()); // Debería retornar 401 Unauthorized, no 403 Forbidden
+    }
 
     @Test
     void authorizationHeaderMalformado_deberiaRetornar403() throws Exception {
     mockMvc.perform(get(endpointProtegido)
             .header("Authorization", "TokenInvalidoSinBearer")
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized()); 
-}
+            .andExpect(status().isUnauthorized());  // Debería retornar 401 Unauthorized, no 403 Forbidden
+    }
 
     @Test
     void tokenValidoSinRoles_deberiaPermitirAcceso() throws Exception {
@@ -101,7 +101,7 @@ class JwtAuthFilterIntegrationTest {
     mockMvc.perform(get("/test/protegido")
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk()); // Verifica que el acceso sea permitido incluso sin roles
     }
 
 }

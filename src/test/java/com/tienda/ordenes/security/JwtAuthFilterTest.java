@@ -40,18 +40,18 @@ class JwtAuthFilterTest {
         String token = "valid.token.value";
         String email = "usuario@example.com";
 
-        request.addHeader("Authorization", "Bearer " + token);
+        request.addHeader("Authorization", "Bearer " + token); // Simula que se envió un token en la solicitud
 
         when(jwtUtil.isTokenExpired(token)).thenReturn(false);
         when(jwtUtil.extractUsername(token)).thenReturn(email);
 
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+        jwtAuthFilter.doFilterInternal(request, response, filterChain); // Simula un token válido
 
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
-        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
         assertEquals(token, principal.getTokenValue());
 
-        verify(filterChain).doFilter(request, response);
+        verify(filterChain).doFilter(request, response); // Verifica que se llamó al siguiente filtro en la cadena
     }
 
     @Test
@@ -59,21 +59,21 @@ class JwtAuthFilterTest {
         String token = "expired.token";
         request.addHeader("Authorization", "Bearer " + token);
 
-        when(jwtUtil.isTokenExpired(token)).thenReturn(true);
+        when(jwtUtil.isTokenExpired(token)).thenReturn(true); 
 
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+        jwtAuthFilter.doFilterInternal(request, response, filterChain); // Simula un token expirado
 
         assertEquals(401, response.getStatus());
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(filterChain, never()).doFilter(any(), any());
+        verify(filterChain, never()).doFilter(any(), any()); // Verifica que no se llamó al siguiente filtro
     }
 
     @Test
     void doFilter_sinToken_noModificaContexto() throws Exception {
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+        jwtAuthFilter.doFilterInternal(request, response, filterChain); // No se envió token en la solicitud
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(filterChain).doFilter(request, response);
+        verify(filterChain).doFilter(request, response); // Verifica que se llamó al siguiente filtro
     }
 
     @Test
@@ -83,9 +83,9 @@ class JwtAuthFilterTest {
 
         when(jwtUtil.isTokenExpired(token)).thenThrow(new RuntimeException("Error simulando JWT"));
 
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
+        jwtAuthFilter.doFilterInternal(request, response, filterChain); // Simula un error al procesar el token
 
         assertEquals(401, response.getStatus());
-        verify(filterChain, never()).doFilter(any(), any());
+        verify(filterChain, never()).doFilter(any(), any()); // Verifica que no se llamó al siguiente filtro
     }
 }

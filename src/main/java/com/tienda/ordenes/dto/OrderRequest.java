@@ -3,6 +3,8 @@ package com.tienda.ordenes.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 
 public class OrderRequest {
@@ -23,9 +25,11 @@ public class OrderRequest {
         private Long productoId;
 
         @NotNull(message = "La cantidad es requerida")
+        @Min(1) // Asegura que la cantidad sea al menos 1   
         private Integer cantidad;
 
         @NotNull(message = "El precio es requerido")
+        @Positive(message = "El precio debe ser positivo")
         private Double precio;
 
         public Long getProductoId() {

@@ -17,25 +17,25 @@ class UserDetailsServiceImplTest {
     @BeforeEach
     void setUp() {
     service = new UserDetailsServiceImpl();
-}
+    }
 
     @Test
     void loadUserByUsername_deberiaCrearUserDetailsConEmail() {
         String email = "usuario@correo.com";
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email); // Simula la carga de usuario por email
 
         assertEquals(email, userDetails.getUsername());
         assertEquals("", userDetails.getPassword());
         assertTrue(userDetails.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
+                .anyMatch(a -> a.getAuthority().equals("ROLE_USER"))); // Verifica que tenga el rol de usuario
     }
 
     @Test
     void loadUserByUsername_emailNulo_lanzaExcepcion() {
-    assertThrows(IllegalArgumentException.class, () -> {
-        service.loadUserByUsername(null);
+    assertThrows(IllegalArgumentException.class, () -> { 
+        service.loadUserByUsername(null); // Simula la carga de usuario con email nulo
     });
-}
+    }
 
 }
