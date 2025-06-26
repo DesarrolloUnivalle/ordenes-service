@@ -40,39 +40,40 @@ jobs:
           docker build -t ${{ env.DOCKER_IMAGE }}:latest .
           docker push ${{ env.DOCKER_IMAGE }}:latest
 
-      - name: Install Minikube
-        run: |
-          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-          sudo install minikube-linux-amd64 /usr/local/bin/minikube
-          minikube version
 
-      - name: Start Minikube
-        run: |
-          minikube start --driver=docker
-          minikube addons enable ingress
-          minikube addons enable metrics-server
-      - name: Deploy to Minikube
-        run: |
-          # Configurar el entorno de Docker de Minikube
-          eval $(minikube -p minikube docker-env)
-          # Construir la imagen en el entorno de Minikube
-          docker build -t ${{ env.DOCKER_IMAGE }}:latest .
-          # Reemplazar variables en los archivos de Kubernetes
-          export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-          envsubst < ${{ env.K8S_DIR }}/deployment.yml > ${{ env.K8S_DIR }}/deployment-processed.yml
-          # Aplicar los manifiestos de Kubernetes
-          kubectl apply -f ${{ env.K8S_DIR }}/deployment-processed.yml
-          kubectl apply -f ${{ env.K8S_DIR }}/service.yml
-          # Verificar el estado de los pods
-          kubectl get pods
-          kubectl describe pods
-          # Esperar a que el despliegue esté listo
-          kubectl rollout status deployment/${{ env.SERVICE_NAME }}-deployment --timeout=120s
-      - name: Cleanup
-        if: always()
-        run: |
-          minikube stop
-          minikube delete
+#      - name: Install Minikube
+ #       run: |
+  #        curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+   #       sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    #      minikube version
+
+#      - name: Start Minikube
+ #       run: |
+  #        minikube start --driver=docker
+   #       minikube addons enable ingress
+    #      minikube addons enable metrics-server
+#      - name: Deploy to Minikube
+ #       run: |
+  #        # Configurar el entorno de Docker de Minikube
+   #       eval $(minikube -p minikube docker-env)
+    #      # Construir la imagen en el entorno de Minikube
+     #     docker build -t ${{ env.DOCKER_IMAGE }}:latest .
+      #    # Reemplazar variables en los archivos de Kubernetes
+       #   export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+        #  envsubst < ${{ env.K8S_DIR }}/deployment.yml > ${{ env.K8S_DIR }}/deployment-processed.yml
+         # # Aplicar los manifiestos de Kubernetes
+          #kubectl apply -f ${{ env.K8S_DIR }}/deployment-processed.yml
+         # kubectl apply -f ${{ env.K8S_DIR }}/service.yml
+        #  # Verificar el estado de los pods
+       #   kubectl get pods
+      #    kubectl describe pods
+     #     # Esperar a que el despliegue esté listo
+    #      kubectl rollout status deployment/${{ env.SERVICE_NAME }}-deployment --timeout=120s
+#      - name: Cleanup
+ #       if: always()
+  #      run: |
+   #       minikube stop
+    #      minikube delete
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
         with:
